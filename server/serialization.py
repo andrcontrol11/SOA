@@ -71,10 +71,12 @@ def protobuf_serialization():
                                globals=globals())
     return (ser_time, deser_time, size)
 
-def serialize(schema, data): #вдохновлено https://habr.com/ru/articles/346698/
+
+def serialize(schema, data):  # вдохновлено https://habr.com/ru/articles/346698/
     bytes_writer = BytesIO()
     fastavro.schemaless_writer(bytes_writer, schema, data)
     return bytes_writer.getvalue()
+
 
 def deserialize(schema, binary):
     bytes_writer = BytesIO()
@@ -83,6 +85,7 @@ def deserialize(schema, binary):
 
     data = fastavro.schemaless_reader(bytes_writer, schema)
     return data
+
 
 shema = {"name": "example.avro",
          "type": "record",
@@ -107,6 +110,7 @@ def avro_serialization():
                                globals=globals())
     return (ser_time, deser_time, size)
 
+
 def yaml_serialization():
     ser_time = timeit.timeit("yaml.dump(structure)", number=10000, globals=globals())
     size = yaml.dump(structure).__sizeof__()
@@ -115,6 +119,7 @@ def yaml_serialization():
                                globals=globals())
     return (ser_time, deser_time, size)
 
+
 def msg_pack_serialization():
     ser_time = timeit.timeit("msgpack.packb(structure)", number=10000, globals=globals())
     size = msgpack.packb(structure).__sizeof__()
@@ -122,6 +127,7 @@ def msg_pack_serialization():
     deser_time = timeit.timeit("msgpack.unpackb(ser)", setup=setup_deser, number=10000,
                                globals=globals())
     return (ser_time, deser_time, size)
+
 
 def get_info():
     ser_time, deser_time, size = 0, 0, 0
@@ -139,21 +145,18 @@ def get_info():
         ser_time, deser_time, size = yaml__serialization()
     elif (os.getenv('HOST') == 'MSGPACK'):
         ser_time, deser_time, size = msg_pack_serialization()
-    data_to_send = os.getenv('HOST') + "-" + str(size) + "-" + str(int(ser_time * 1000)) + "ms" + "-" + str(
+    data_to_send = os.getenv('HOST') + " - " + str(size) + " - " + str(int(ser_time * 1000)) + "ms" + " - " + str(
         int(deser_time * 1000)) + "ms"
     return data_to_send
+
 
 if __name__ == "__main__":
     host = os.environ['HOST']
     port = int(os.environ['PORT'])
-    print(host, port)
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) as socket1:
-        socket1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        socket1.bind(('', port))
-        while True:
-            print("in while")
-            _, address = socket1.recvfrom(1024)
-            print("after recv")
-            data = get_info()
-            print(data)
-            socket1.sendto(bytes(data + "\n", "utf-8"), address)
+    socket1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    socket1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    socket1.bind(('', port))
+    while True:
+        _, address = socket1.recvfrom(1024)
+        data = get_info()
+        socket1.sendto(bytes(data + "\n", "utf-8"), address)
