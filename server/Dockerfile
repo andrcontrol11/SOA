@@ -1,5 +1,7 @@
-FROM python:3.8
+FROM python:3.9
 WORKDIR /code
 COPY . .
+
 RUN pip install -r requirements.txt
-CMD  ["python3", "serialization.py"]
+
+ENTRYPOINT ["python3", "-u", "serialization.py"]

@@ -125,21 +125,21 @@ def msg_pack_serialization():
 
 def get_info():
     ser_time, deser_time, size = 0, 0, 0
-    if (os.getenv('TYPE') == 'PICKLE'):
+    if (os.getenv('HOST') == 'PICKLE'):
         ser_time, deser_time, size = pickle_serialization()
-    elif (os.getenv('TYPE') == 'JSON'):
+    elif (os.getenv('HOST') == 'JSON'):
         ser_time, deser_time, size = json_serialization()
-    elif (os.getenv('TYPE') == 'XML'):
+    elif (os.getenv('HOST') == 'XML'):
         ser_time, deser_time, size = xml_serialization()
-    elif (os.getenv('TYPE') == 'PROTO_BUFF'):
+    elif (os.getenv('HOST') == 'PROTOBUFF'):
         ser_time, deser_time, size = protobuf_serialization()
-    elif (os.getenv('TYPE') == 'AVRO'):
+    elif (os.getenv('HOST') == 'AVRO'):
         ser_time, deser_time, size = avro_serialization()
-    elif (os.getenv('TYPE') == 'YAML'):
+    elif (os.getenv('HOST') == 'YAML'):
         ser_time, deser_time, size = yaml__serialization()
-    elif (os.getenv('TYPE') == 'MSG_PACK'):
+    elif (os.getenv('HOST') == 'MSGPACK'):
         ser_time, deser_time, size = msg_pack_serialization()
-    data_to_send = os.getenv('TYPE') + "-" + str(size) + "-" + str(int(ser_time * 1000)) + "ms" + "-" + str(
+    data_to_send = os.getenv('HOST') + "-" + str(size) + "-" + str(int(ser_time * 1000)) + "ms" + "-" + str(
         int(deser_time * 1000)) + "ms"
     return data_to_send
 
@@ -147,11 +147,13 @@ if __name__ == "__main__":
     host = os.environ['HOST']
     port = int(os.environ['PORT'])
     print(host, port)
-    socket1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    socket1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    socket1.bind(('', port))
-    while True:
-        _, address = socket1.recvfrom(1024)
-        data = get_info()
-        print(data)
-        socket1.sendto(bytes(data + "\n", "utf-8"), address)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) as socket1:
+        socket1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        socket1.bind(('', port))
+        while True:
+            print("in while")
+            _, address = socket1.recvfrom(1024)
+            print("after recv")
+            data = get_info()
+            print(data)
+            socket1.sendto(bytes(data + "\n", "utf-8"), address)

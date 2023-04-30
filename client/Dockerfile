@@ -4,4 +4,4 @@ WORKDIR /code
 
 COPY . .
 
-CMD [ "python3", "client.py" ]
+ENTRYPOINT ["python3", "-u", "client.py"]
