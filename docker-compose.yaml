@@ -1,0 +1,81 @@
+version: "3"
+services:
+  pickle:
+    image: andrcontrol/server
+    hostname: PICKLE
+    expose:
+      - 10000/udp
+    environment:
+      - PORT=10000
+      - HOST=PICKLE
+
+  json:
+    image: andrcontrol/server
+    hostname: JSON
+    expose:
+      - 10001/udp
+    environment:
+      - PORT=10001
+      - HOST=JSON
+
+  xml:
+    image: andrcontrol/server
+    hostname: XML
+    expose:
+      - 10002/udp
+    environment:
+      - PORT=10002
+      - HOST=XML
+
+  proto_buf:
+    image: andrcontrol/server
+    hostname: PROTO_BUFF
+    expose:
+      - 10003/udp
+    environment:
+      - PORT=10003
+      - HOST=PROTO_BUFF
+
+  avro:
+    image: andrcontrol/server
+    hostname: AVRO
+    expose:
+      - 10004/udp
+    environment:
+      - PORT=10004
+      - HOST=AVRO
+
+  yaml:
+    image: andrcontrol/server
+    hostname: YAML
+    expose:
+      - 10005/udp
+    environment:
+      - PORT=10005
+      - HOST=YAML
+
+  msg_pack:
+    image: andrcontrol/server
+    hostname: MSG_PACK
+    expose:
+      - 10006/udp
+    environment:
+      - PORT=10006
+      - HOST=MSG_PACK
+
+  client:
+    image: andrcontrol/client
+    expose:
+      - 2000/udp
+    ports:
+      - 2000:2000/udp
+    depends_on:
+      - pickle
+      - json
+      - xml
+      - avro
+      - yaml
+      - proto_buf
+      - msg_pack
+    environment:
+      - PORT=2000
