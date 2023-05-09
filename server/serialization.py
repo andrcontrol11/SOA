@@ -82,7 +82,6 @@ def deserialize(schema, binary):
     bytes_writer = BytesIO()
     bytes_writer.write(binary)
     bytes_writer.seek(0)
-
     data = fastavro.schemaless_reader(bytes_writer, schema)
     return data
 
