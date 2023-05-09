@@ -142,7 +142,7 @@ def get_info():
     elif (os.getenv('HOST') == 'AVRO'):
         ser_time, deser_time, size = avro_serialization()
     elif (os.getenv('HOST') == 'YAML'):
-        ser_time, deser_time, size = yaml__serialization()
+        ser_time, deser_time, size = yaml_serialization()
     elif (os.getenv('HOST') == 'MSGPACK'):
         ser_time, deser_time, size = msg_pack_serialization()
     data_to_send = os.getenv('HOST') + " - " + str(size) + " - " + str(int(ser_time * 1000)) + "ms" + " - " + str(
