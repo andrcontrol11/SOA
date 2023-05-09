@@ -85,7 +85,6 @@ def deserialize(schema, binary):
     data = fastavro.schemaless_reader(bytes_writer, schema)
     return data
 
-
 shema = {"name": "example.avro",
          "type": "record",
          "fields": [
